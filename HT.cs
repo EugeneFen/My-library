@@ -39,6 +39,7 @@ namespace My_library
 
 		private int Collision(int index, string buff) //++++
 		{
+			int step = 0;
 			int i = 0;
 			int j = 1;
 			int two_index = index;
@@ -50,7 +51,7 @@ namespace My_library
 				else if (table[two_index].state == 0) return two_index;
 				else if (table[two_index].state == 2)
 				{
-					if (Search(buff) < 0)
+					if (Search(buff, ref step) < 0)
 					{
 						return two_index;
 					}
@@ -123,7 +124,8 @@ namespace My_library
 		public bool Add(string fio_v, string website_v, string country_v) //добавление  !!!!!!!!!!!!!!!  ++++
 		{
 			int index = Hash_One_Function(fio_v); //вычисляем место для эл
-
+			int step = 0;
+			
 			if (table[index].fio == fio_v && table[index].state == 1) return false;
 			else
 			if (table[index].state == 1)
@@ -137,8 +139,8 @@ namespace My_library
 					table[two_index].country = country_v;
 					table[two_index].state = 1;
 					table[two_index].index1 = index;
-                    table[two_index].index2 = two_index;
-                    return true;
+                                        table[two_index].index2 = two_index;
+                                        return true;
 				}
 				else return false;
 			}
@@ -150,21 +152,21 @@ namespace My_library
 				table[index].country = country_v;
 				table[index].state = 1;
 				table[index].index1 = index;
-                table[index].index2 = -1;
-                return true;
+                                table[index].index2 = -1;
+                                return true;
 			}
 			else
 			if (table[index].state == 2)
 			{
-				if (Search(fio_v) < 0)
+				if (Search(fio_v, ref step) < 0)
 				{
 					table[index].website = website_v;
 					table[index].fio = fio_v;
 					table[index].country = country_v;
 					table[index].state = 1;
-                    table[index].index1 = index;
-                    table[index].index2 = -1;
-                    return true;
+                                        table[index].index1 = index;
+                                        table[index].index2 = -1;
+                                        return true;
 				}
 				else
 				{
@@ -201,14 +203,16 @@ namespace My_library
 			}
 		}
 
-		public int Search(string fio_v) //поиск ++++
+		public int Search(string fio_v, ref int score) //поиск ++++
 		{
 			int index = Hash_One_Function(fio_v);
 			int two_index = index;
 			int i = 0;
 			int j = 1;
+			score = 0;
 			while (table[two_index].fio != "_" && i < buffer_size)
 			{
+				score++;
 				if (table[two_index].fio == fio_v && table[two_index].state == 1) return two_index;
 				two_index = Hash_Two_Function(index, j);
 				j++;
@@ -223,16 +227,28 @@ namespace My_library
 
 			if (File.Exists(curfile))
 			{
-
 				StreamReader file = new StreamReader("Author.txt");
 
 				string fio_v, website_v, country_v;
+				fio_v = website_v = country_v = "";
 
 				while (!file.EndOfStream)
 				{
-					website_v = file.ReadLine();
-					fio_v = file.ReadLine();
-					country_v = file.ReadLine();
+					buff = file.ReadLine();
+					string litter = "*";
+					int j = 0;
+
+					for (int i = 0; i < 2; i++)
+					{
+						while (buff[j] != litter[0]) j++;
+						if (i == 0) website_v = buff.Substring(0, j);
+						if (i == 1) fio_v = buff.Substring(0, j);
+
+						buff = buff.Remove(0, j + 1);
+						j = 0;
+					}
+					int size_buff = buff.Length;
+					country_v = buff.Substring(0, size_buff);
 
 					Add(fio_v, website_v, country_v);
 				}
@@ -243,6 +259,37 @@ namespace My_library
 		~Hash() //деструктор
 		{
 
+		}
+		
+		public void Write_file()
+                {
+			string curfile = @"Author.txt";
+
+			if (File.Exists(curfile))
+			{
+				File.WriteAllText(curfile, ""); //очистка файла
+				StreamWriter file = new StreamWriter("Author.txt");
+
+
+				for (int i = 0; i < buffer_size; i++)
+				{
+					if(table[i].fio != "_") file.WriteLine(table[i].website + "*" + table[i].fio + "*" + table[i].country);
+				}
+				file.Close();
+			}
+		}
+		
+		public void Write_History(int index)
+                {
+			string curfile = @"History.txt";
+
+			if (File.Exists(curfile))
+			{
+				File.WriteAllText(curfile, ""); //очистка файла
+				StreamWriter file = new StreamWriter("History.txt");
+				file.WriteLine(table[index].website + "  " + table[index].fio + "  " + table[index].country);
+				file.Close();
+			}
 		}
 	};
 }
