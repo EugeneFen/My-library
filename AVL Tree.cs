@@ -450,19 +450,32 @@ namespace My_library
 					h += 4;
 					Drawing(ref tree.right, h, ref list);
 					
-					for(int i = 0; i<h; i++)
+					if (tree.key.next == null)
 					{
-						buff = buff + "  ";
+						for (int i = 0; i < h; i++) buff = buff + "  ";
+						buff = buff + tree.balans + " " + tree.key.fio + " " + tree.key.genre + " " + tree.key.name + " " + tree.key.year;
+						list.Add(buff);
 					}
+					else
+					{
+						for (int i = 0; i < h; i++) buff = buff + "  ";
+						buff = buff + tree.balans + " " + tree.key.fio + " " + tree.key.genre + " " + tree.key.name + " " + tree.key.year + "   ";
 
-					buff = buff + tree.balans + " " + tree.key.fio + " " + tree.key.genre + " " + tree.key.name + " " + tree.key.year;
-					list.Add(buff);
+						Key_1 buff1 = tree.key;
+						do
+						{
+							buff1 = buff1.next;
+							buff = buff + " " + buff1.name + " " + buff1.year;
+
+						} while (buff1.next != null);
+						list.Add(buff);
+					}	
 					
 					Drawing(ref tree.left, h, ref list);
 				}
 			}
-
-			public bool Poisk(string fio_v, string genre_v, string name_v) //поиск книги
+			
+			public bool Seach_Book(string fio_v, string genre_v, string name_v) //поиск книги
 			{
 				Node curr = root;
 				while (curr != null)
@@ -482,15 +495,45 @@ namespace My_library
 				}
 				return false;
 			}
-
-			public bool Rummage(string fio_v, string genre_v) //поиск автора с жанром
+			
+			public void getSeach(string fio_v, string genre_v, ref List<string> list) 
 			{
+				string buffer = "";
 				Node curr = root;
 				while (curr != null)
 				{
+					if (fio_v == curr.key.fio && genre_v == curr.key.genre)
+					{
+						buffer = buffer + curr.key.fio + " " + curr.key.genre + " " + curr.key.name + " " + curr.key.year;
+						list.Add(buffer);
+						buffer = "";
+					}
+					if (fio_v == curr.key.fio && genre_v == curr.key.genre && curr.key.next != null)
+					{
+						Key_1 buff = curr.key;
+						do
+						{
+							buff = buff.next;
+							buffer = buffer + buff.fio + " " + buff.genre + " " + buff.name + " " + buff.year;
+							list.Add(buffer);
+							buffer = "";
+						} while (buff.next != null);
+					}
+					if ((string.Compare(curr.key.fio, fio_v) > 0) || (fio_v == curr.key.fio && (string.Compare(curr.key.genre, genre_v) > 0))) curr = curr.left;
+					else curr = curr.right;
+				}
+			}
+			
+			public bool Search_Author(string fio_v, string genre_v, ref int score) //поиск автора с жанром
+			{
+				Node curr = root;
+				score = 0;
+				while (curr != null)
+				{					
 					if (fio_v == curr.key.fio && genre_v == curr.key.genre) return true;					
 					if ((string.Compare(curr.key.fio, fio_v) > 0) || (fio_v == curr.key.fio && (string.Compare(curr.key.genre, genre_v) > 0))) curr = curr.left;
 					else curr = curr.right;
+					score++;
 				}
 				return false;
 			}
@@ -506,7 +549,7 @@ namespace My_library
 				}
 				return true;
 			}
-
+			
 			private void Rbl(ref Node tree, ref List<Key_1> list) //
 			{
 				if (tree != null)
@@ -519,6 +562,7 @@ namespace My_library
 					else
 					{
 						Key_1 buff = tree.key;
+						list.Add(buff);
 						do
 						{
 							list.Add(buff);
@@ -577,19 +621,52 @@ namespace My_library
 				{
 					StreamReader file = new StreamReader("Book.txt");
 					string fio_v, name_v, genre_v, year_v;
-
+					fio_v = name_v = genre_v = year_v  = "";
 
 					while (!file.EndOfStream)
 					{
-						name_v = file.ReadLine();
-						fio_v = file.ReadLine();
-						year_v = file.ReadLine();
-						genre_v = file.ReadLine();
+						buff = file.ReadLine();						
+						string litter = "*";
+						int j = 0;
+
+						for (int i = 0; i < 3; i++)
+						{
+							while (buff[j] != litter[0]) j++;
+							if (i == 0) name_v = buff.Substring(0, j);
+							if (i == 1) fio_v = buff.Substring(0, j);
+							if (i == 2) year_v = buff.Substring(0, j);
+
+							buff = buff.Remove(0, j+1);
+							j = 0;
+						}
+						int size_buff = buff.Length;
+						genre_v = buff.Substring(0, size_buff);
 
 						Check(name_v, fio_v, genre_v, year_v, flag);
 					}
 					file.Close();
 				}
+			}
+			
+			public void Write_file()
+			{
+			   string curfile = @"Book.txt";
+
+			   if (File.Exists(curfile))//проверка
+			   {
+				File.WriteAllText(curfile, ""); //очистка файла
+				StreamWriter file = new StreamWriter("Book.txt");
+
+				var avltree = new List<Key_1>();
+				Rbl(ref root, ref avltree);
+
+				for (int i = 0; i < avltree.Count; i++)
+				{
+					file.WriteLine(avltree[i].name + "*" + avltree[i].fio + "*" + avltree[i].year + "*" + avltree[i].genre);
+				}
+
+                                file.Close(); 
+			   }
 			}
 
 			public AVLTree() //конструктор
