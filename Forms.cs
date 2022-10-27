@@ -74,9 +74,10 @@ namespace My_library
             string text1 = FIO.Text;
             string text2 = Country.Text;
             string text3 = Website.Text;
+            int auter_search = 0;
 
             if ((text1 != "") && (text2 != "") && (text3 != ""))
-                if (hashtable.Search(text1) > 0)
+                if (hashtable.Search(text1, ref auter_search) > 0)
                     MessageBox.Show("Такой автор уже есть", "Сообщение");
                 else
                 {
@@ -96,9 +97,10 @@ namespace My_library
             string text2 = AddName.Text;
             string text3 = Genre1.Text;
             string text4 = Year.Text;
+            int auter_search = 0;
 
             if ((text1 != "") && (text2 != "") && (text3 != "") && (text4 != ""))
-                if (hashtable.Search(text1) > 0)
+                if (hashtable.Search(text1, ref auter_search) > 0)
                 {
                     root.Check(text2, text1, text3, text4, true);
                     Writ_table_AVL();
@@ -114,9 +116,10 @@ namespace My_library
         private void DeleteAfter_Click(object sender, EventArgs e)
         {
             string text1 = DelFIO.Text;
+            int auter_search = 0;
 
             if(text1 != "")
-                if (hashtable.Search(text1) > 0)
+               if (hashtable.Search(text1, ref auter_search) > 0)
                     if(root.Search_fio(text1)) //если у автора нет книг
                     {
                         hashtable.Del(text1);
@@ -201,19 +204,27 @@ namespace My_library
         {
             string text1 = FIO3.Text;
             string text2 = Genre2.Text;
+            int auter_search = 0;
+            int book_search = 0;
+			int result = hashtable.Search(text1, ref auter_search);
 
             if ((text1 != "") && (text2 != ""))
-                if (hashtable.Search(text1) > 0) //если такой автор впринципе сущ
+               if (result > 0) //если такой автор впринципе сущ
                     if (root.CheckRot()) //если авл не пустое дерево
-                        if (root.Rummage(text1, text2)) //если автор пишет в нужном жанре
+                        if (root.Search_Author(text1, text2, ref book_search)) //если автор пишет в нужном жанре
                         {
-                            int buff = hashtable.Search(text1); //индекс под которым стоит автор в хт
-                            Notebook buff2 = hashtable.Copielement(buff);
-                            Write_FIO.Text = buff2.fio;                            
-                            Write_Countru.Text = buff2.country;
-                            Write_WebSite.Text = buff2.website;
+                            Notebook element = hashtable.Copielement(result);
+                            Write_FIO.Text = element.fio;                            
+                            Write_Countru.Text = element.country;
+                            Write_WebSite.Text = element.website;
+                            outFIO_auters.Text = element.fio;
+                            outFIO_books.Text = element.fio;
+                            outGenre_books.Text = text2;
+                            step_auters.Text = auter_search.ToString();
+                            step_books.Text = book_search.ToString();
                             FIO3.Text = "";
                             Genre2.Text = "";
+                            hashtable.Write_History(result); 
                         }
                         else
                             MessageBox.Show("Автор не пишет в таком жанре", "Сообщение");
@@ -239,9 +250,51 @@ namespace My_library
             for (int i = 1; i < avltree.Count; i++)
             {
                 WriteAVL.SelectedText = Environment.NewLine + avltree[i];
+            }           
+        }
+        
+        private void save_data_Click(object sender, EventArgs e)
+        {
+            root.Write_file();
+            hashtable.Write_file();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            int auter_search = 0;
+            string text1 = textBox1.Text;
+            int result = hashtable.Search(text1, ref auter_search);
+            if (text1 != "")
+                if (result > 0)
+                {
+                    Notebook element = hashtable.Copielement(result);
+                    textBox5.Text = element.country;
+                    textBox4.Text = element.website;
+                }
+                else
+                    MessageBox.Show("Такого автора нет", "Сообщение");
+            else
+                MessageBox.Show("Поля оказались пусты", "Сообщение");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string text1 = textBox3.Text;
+            string text2 = textBox2.Text;
+            var list = new List<string>();
+
+            Search_AVL.Clear();
+            root.getSeach(text1, text2, ref list);
+            if(list.Count != 0)
+            {
+                Search_AVL.SelectedText = list[0];
+                for (int i = 1; i < list.Count; i++)
+                {
+                    Search_AVL.SelectedText = Environment.NewLine + list[i];
+                }
             }
-                
-            
+            else
+                MessageBox.Show("Нет ни одной книги", "Сообщение");
         }
     }
 }
