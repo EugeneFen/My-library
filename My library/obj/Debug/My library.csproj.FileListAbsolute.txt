@@ -1,0 +1,21 @@
+D:\Курсовая\Form\My library\bin\Debug\My library.exe.config
+D:\Курсовая\Form\My library\bin\Debug\My library.exe
+D:\Курсовая\Form\My library\bin\Debug\My library.pdb
+D:\Курсовая\Form\My library\obj\Debug\My library.csproj.AssemblyReference.cache
+D:\Курсовая\Form\My library\obj\Debug\My_library.Form1.resources
+D:\Курсовая\Form\My library\obj\Debug\My_library.Properties.Resources.resources
+D:\Курсовая\Form\My library\obj\Debug\My library.csproj.GenerateResource.cache
+D:\Курсовая\Form\My library\obj\Debug\My library.csproj.CoreCompileInputs.cache
+D:\Курсовая\Form\My library\obj\Debug\My library.exe
+D:\Курсовая\Form\My library\obj\Debug\My library.pdb
+F:\Курсовая\Form\My library\bin\Debug\My library.exe.config
+F:\Курсовая\Form\My library\bin\Debug\My library.exe
+F:\Курсовая\Form\My library\bin\Debug\My library.pdb
+F:\Курсовая\Form\My library\obj\Debug\My library.csproj.AssemblyReference.cache
+F:\Курсовая\Form\My library\obj\Debug\My library.csproj.SuggestedBindingRedirects.cache
+F:\Курсовая\Form\My library\obj\Debug\My_library.Form1.resources
+F:\Курсовая\Form\My library\obj\Debug\My_library.Properties.Resources.resources
+F:\Курсовая\Form\My library\obj\Debug\My library.csproj.GenerateResource.cache
+F:\Курсовая\Form\My library\obj\Debug\My library.csproj.CoreCompileInputs.cache
+F:\Курсовая\Form\My library\obj\Debug\My library.exe
+F:\Курсовая\Form\My library\obj\Debug\My library.pdb
